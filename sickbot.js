@@ -1,9 +1,9 @@
-var five = require("johnny-five"),
-	Spark = require("spark-io"),
-	keypress  = require('keypress');
+var five = require("johnny-five");
+var Spark = require("spark-io");
+var keypress = require("keypress");
 
-//Activate keypress code
-keypress(process.stdin);
+// //Activate keypress code
+	keypress(process.stdin);
 
 // Create Johnny-Five board connected via Spark
 var board = new five.Board({
@@ -14,35 +14,76 @@ var board = new five.Board({
 });
 
 //Declare variables of items that will be in use
-var sickBot, ledEyes;
+var sickBotLeft, sickBotRight;
+//var ledEyes;
 
 board.on("ready", function() {
-	console.log("Assemebled");
+	console.log("Alert, I am assemebling...");
 
-
-
-//WHEELS
+	//WHEELS
 	//Created a Servo object - will eventually need to set up 2 in order to controll seperately
-	sickBot =  new five.Servo({
-		//PWM is available on D0, D1. Should include A0, A1, A5
-		pin: 'A0', 
-		type:"continuous"
-	}).stop();
+	var sickBotLeft =  new five.Servo({	pin: 'D0', 	type: "continuous"}).stop();
+	var sickBotRight  =  new five.Servo({	pin: 'A0', 	type: "continuous"}).stop();
+	
+	//Using Keypress to control wheels
+	process.stdin.resume();
+	process.stdin.setEncoding("utf8");
+  	process.stdin.setRawMode(true);
 
-	sickBot.cw();	
+  	process.stdin.on("keypress", function(ch, key) {
 
-//Using Keypress to control wheels
+    if (!key) {
+      return;
+    }
 
+    if (key.name === "q") {
 
+      console.log("Quitting");
+      process.exit();
+
+    } else if (key.name === "up") {
+
+      console.log("CW");
+      sickBotLeft.ccw();
+      sickBotRight.cw();
+
+    } else if (key.name === "down") {
+
+      console.log("CCW");
+      sickBotLeft.cw();
+      sickBotRight.ccw();
+
+    } else if (key.name === "space") {
+
+      console.log("Stopping");
+      sickBotLeft.stop();
+      sickBotRight.stop();
+
+    } else if (key.name === "left") {
+
+	  console.log("Left");
+      sickBotLeft.ccw();
+      sickBotRight.ccw();
+
+    } else if (key.name === "right") {
+
+	  console.log("Right");
+      sickBotLeft.cw();
+      sickBotRight.cw();
+
+    }
+
+});
 
 //EYES
-	ledEyes = new five.Led('D0');
-	ledEyes.strobe(3000);
+	// ledEyes = new five.Led('D0');
+	// ledEyes.strobe(3000);
 
 //Allow access directly from command line	
 	board.repl.inject({
-		sickBot: sickBot,
-		ledEyes: ledEyes
+		sickBotLeft: sickBotLeft,
+		sickBotRight: sickBotRight//,
+		//ledEyes: ledEyes
 	}); 
-	console.log("Loaded");
+	console.log("Fully asssembled. Let's go!");
 }); //End of board.on function
