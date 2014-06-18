@@ -13,18 +13,17 @@ var board = new five.Board({
 	})
 });
 
-//Declare variables of items that will be in use
-var sickBotLeft, sickBotRight;
-//var ledEyes;
+//Servos variables before renaming
+var servosLeft, servosRight, servos;
 
 board.on("ready", function() {
 	console.log("Alert, I am assemebling...");
 
 	//WHEELS
-	//Created a Servo object - will eventually need to set up 2 in order to controll seperately
-	var sickBotLeft =  new five.Servo({	pin: 'D0', 	type: "continuous"}).stop();
-	var sickBotRight  =  new five.Servo({	pin: 'A0', 	type: "continuous"}).stop();
-	
+	servosLeft = new five.Servo({pin: 'D0', type: "continuous"}).stop();
+	servosRight =  new five.Servo({pin: 'A0', type: "continuous"}).stop();
+
+
 	//Using Keypress to control wheels
 	process.stdin.resume();
 	process.stdin.setEncoding("utf8");
@@ -43,47 +42,43 @@ board.on("ready", function() {
 
     } else if (key.name === "up") {
 
-      console.log("CW");
-      sickBotLeft.ccw();
-      sickBotRight.cw();
+      console.log("CCW");
+      servosLeft.cw();
+      servosRight.ccw();
+
 
     } else if (key.name === "down") {
 
-      console.log("CCW");
-      sickBotLeft.cw();
-      sickBotRight.ccw();
+      console.log("CW");
+      servosLeft.ccw();
+      servosRight.cw();
 
     } else if (key.name === "space") {
 
       console.log("Stopping");
-      sickBotLeft.stop();
-      sickBotRight.stop();
+      servosLeft.stop();
+      servosRight.stop();
 
     } else if (key.name === "left") {
 
 	  console.log("Left");
-      sickBotLeft.ccw();
-      sickBotRight.ccw();
+      servosLeft.ccw();
+      servosRight.ccw();
 
     } else if (key.name === "right") {
 
 	  console.log("Right");
-      sickBotLeft.cw();
-      sickBotRight.cw();
+      servosLeft.cw();
+      servosRight.cw();
 
     }
 
 });
 
-//EYES
-	// ledEyes = new five.Led('D0');
-	// ledEyes.strobe(3000);
-
 //Allow access directly from command line	
 	board.repl.inject({
-		sickBotLeft: sickBotLeft,
-		sickBotRight: sickBotRight//,
-		//ledEyes: ledEyes
+		servosLeft:servosLeft,
+		servosRight: servosRight
 	}); 
 	console.log("Fully asssembled. Let's go!");
 }); //End of board.on function
